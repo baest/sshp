@@ -16,6 +16,8 @@ my @output = ();
 
 #conditional defines (should be depending on arguments to sshp like @home)
 
+#STOP (stop processing)
+
 foreach (@ssh_file) {
 	chomp;
 
@@ -46,15 +48,17 @@ foreach (@ssh_file) {
 
 			my $regex = '\\$(' . join('|', keys %$params) . ')';
 			$data =~ s!$regex!$args[$params->{$1}] || $defaults->[$params->{$1}]!e;
-			warn $data;
 		}
 
 		push @output, $data;
+	}
+	elsif (/^\#STOP/) {
+		last;
 	}
 	else {
 		push @output, $_;
 	}
 }
 
-warn Dumper(\%defines);
-#say join("\n", @output);
+#warn Dumper(\%defines);
+say join("\n", @output);
